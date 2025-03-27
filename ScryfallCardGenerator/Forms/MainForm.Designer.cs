@@ -35,6 +35,7 @@
             lblCardCount = new Label();
             rtbCardCount = new RichTextBox();
             btnRandomize = new Button();
+            lblAdvancedOptions = new Label();
             panMain.SuspendLayout();
             tblPanMain.SuspendLayout();
             SuspendLayout();
@@ -83,6 +84,7 @@
             tblPanMain.ColumnCount = 2;
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.4129944F));
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5870056F));
+            tblPanMain.Controls.Add(lblAdvancedOptions, 0, 2);
             tblPanMain.Controls.Add(lblCardCount, 0, 0);
             tblPanMain.Controls.Add(rtbCardCount, 1, 1);
             tblPanMain.Controls.Add(btnRandomize, 1, 2);
@@ -94,6 +96,7 @@
             tblPanMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tblPanMain.RowStyles.Add(new RowStyle(SizeType.Percent, 31.034483F));
             tblPanMain.RowStyles.Add(new RowStyle(SizeType.Percent, 48.2758636F));
+            tblPanMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tblPanMain.Size = new Size(431, 146);
             tblPanMain.TabIndex = 1;
             // 
@@ -105,7 +108,7 @@
             lblCardCount.Location = new Point(3, 0);
             lblCardCount.Name = "lblCardCount";
             tblPanMain.SetRowSpan(lblCardCount, 2);
-            lblCardCount.Size = new Size(263, 74);
+            lblCardCount.Size = new Size(263, 64);
             lblCardCount.TabIndex = 0;
             lblCardCount.Text = "How many cards are you randomizing?";
             // 
@@ -115,10 +118,10 @@
             rtbCardCount.BorderStyle = BorderStyle.None;
             rtbCardCount.Dock = DockStyle.Fill;
             rtbCardCount.ForeColor = SystemColors.ButtonHighlight;
-            rtbCardCount.Location = new Point(272, 32);
+            rtbCardCount.Location = new Point(272, 28);
             rtbCardCount.Multiline = false;
             rtbCardCount.Name = "rtbCardCount";
-            rtbCardCount.Size = new Size(156, 39);
+            rtbCardCount.Size = new Size(156, 33);
             rtbCardCount.TabIndex = 1;
             rtbCardCount.Text = "100";
             rtbCardCount.WordWrap = false;
@@ -126,13 +129,26 @@
             // btnRandomize
             // 
             btnRandomize.Dock = DockStyle.Fill;
-            btnRandomize.Location = new Point(272, 77);
+            btnRandomize.Location = new Point(272, 67);
             btnRandomize.Name = "btnRandomize";
-            btnRandomize.Size = new Size(156, 66);
+            btnRandomize.Size = new Size(156, 55);
             btnRandomize.TabIndex = 2;
             btnRandomize.Text = "Randomize";
             btnRandomize.UseVisualStyleBackColor = true;
             btnRandomize.Click += btnRandomize_Click;
+            // 
+            // lblAdvancedOptions
+            // 
+            lblAdvancedOptions.AutoSize = true;
+            lblAdvancedOptions.Dock = DockStyle.Fill;
+            lblAdvancedOptions.ForeColor = SystemColors.ButtonHighlight;
+            lblAdvancedOptions.Location = new Point(3, 64);
+            lblAdvancedOptions.Name = "lblAdvancedOptions";
+            tblPanMain.SetRowSpan(lblAdvancedOptions, 2);
+            lblAdvancedOptions.Size = new Size(263, 82);
+            lblAdvancedOptions.TabIndex = 3;
+            lblAdvancedOptions.Text = "Advanced Options";
+            lblAdvancedOptions.Visible = false;
             // 
             // MainForm
             // 
@@ -160,5 +176,6 @@
         private Label lblCardCount;
         private RichTextBox rtbCardCount;
         private Button btnRandomize;
+        private Label lblAdvancedOptions;
     }
 }
