@@ -24,6 +24,9 @@ namespace ScryfallCardGenerator.Tools
 
         [JsonProperty("set_name")]
         public string SetName { get; set; }
+        
+        [JsonProperty("color_identity")]
+        public string ColorIdentity { get; set; }
 
     }
 }

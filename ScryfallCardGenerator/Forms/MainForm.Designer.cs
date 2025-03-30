@@ -32,10 +32,11 @@
             btnMinimize = new Button();
             btnClose = new Button();
             tblPanMain = new TableLayoutPanel();
+            label1 = new Label();
+            lblAdvancedOptions = new Label();
             lblCardCount = new Label();
             rtbCardCount = new RichTextBox();
             btnRandomize = new Button();
-            lblAdvancedOptions = new Label();
             panMain.SuspendLayout();
             tblPanMain.SuspendLayout();
             SuspendLayout();
@@ -50,6 +51,9 @@
             panMain.Name = "panMain";
             panMain.Size = new Size(431, 34);
             panMain.TabIndex = 0;
+            panMain.MouseDown += panMain_MouseDown;
+            panMain.MouseMove += panMain_MouseMove;
+            panMain.MouseUp += panMain_MouseUp;
             // 
             // btnMinimize
             // 
@@ -84,7 +88,8 @@
             tblPanMain.ColumnCount = 2;
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.4129944F));
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5870056F));
-            tblPanMain.Controls.Add(lblAdvancedOptions, 0, 2);
+            tblPanMain.Controls.Add(label1, 0, 2);
+            tblPanMain.Controls.Add(lblAdvancedOptions, 0, 3);
             tblPanMain.Controls.Add(lblCardCount, 0, 0);
             tblPanMain.Controls.Add(rtbCardCount, 1, 1);
             tblPanMain.Controls.Add(btnRandomize, 1, 2);
@@ -99,6 +104,30 @@
             tblPanMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tblPanMain.Size = new Size(431, 146);
             tblPanMain.TabIndex = 1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
+            label1.ForeColor = SystemColors.ButtonHighlight;
+            label1.Location = new Point(3, 64);
+            label1.Name = "label1";
+            label1.Size = new Size(263, 61);
+            label1.TabIndex = 4;
+            label1.Text = "000/100";
+            label1.TextAlign = ContentAlignment.BottomRight;
+            // 
+            // lblAdvancedOptions
+            // 
+            lblAdvancedOptions.AutoSize = true;
+            lblAdvancedOptions.Dock = DockStyle.Fill;
+            lblAdvancedOptions.ForeColor = SystemColors.ButtonHighlight;
+            lblAdvancedOptions.Location = new Point(3, 125);
+            lblAdvancedOptions.Name = "lblAdvancedOptions";
+            lblAdvancedOptions.Size = new Size(263, 21);
+            lblAdvancedOptions.TabIndex = 3;
+            lblAdvancedOptions.Text = "Advanced Options";
+            lblAdvancedOptions.Visible = false;
             // 
             // lblCardCount
             // 
@@ -125,6 +154,7 @@
             rtbCardCount.TabIndex = 1;
             rtbCardCount.Text = "100";
             rtbCardCount.WordWrap = false;
+            rtbCardCount.TextChanged += rtbCardCount_TextChanged;
             // 
             // btnRandomize
             // 
@@ -136,19 +166,6 @@
             btnRandomize.Text = "Randomize";
             btnRandomize.UseVisualStyleBackColor = true;
             btnRandomize.Click += btnRandomize_Click;
-            // 
-            // lblAdvancedOptions
-            // 
-            lblAdvancedOptions.AutoSize = true;
-            lblAdvancedOptions.Dock = DockStyle.Fill;
-            lblAdvancedOptions.ForeColor = SystemColors.ButtonHighlight;
-            lblAdvancedOptions.Location = new Point(3, 64);
-            lblAdvancedOptions.Name = "lblAdvancedOptions";
-            tblPanMain.SetRowSpan(lblAdvancedOptions, 2);
-            lblAdvancedOptions.Size = new Size(263, 82);
-            lblAdvancedOptions.TabIndex = 3;
-            lblAdvancedOptions.Text = "Advanced Options";
-            lblAdvancedOptions.Visible = false;
             // 
             // MainForm
             // 
@@ -177,5 +194,6 @@
         private RichTextBox rtbCardCount;
         private Button btnRandomize;
         private Label lblAdvancedOptions;
+        private Label label1;
     }
 }

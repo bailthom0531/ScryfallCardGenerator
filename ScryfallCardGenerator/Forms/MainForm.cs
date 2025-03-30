@@ -5,12 +5,15 @@ namespace ScryfallCardGenerator
 {
     public partial class MainForm : Form
     {
+        private bool dragging = false;
+        private Point dragCursorPoint;
+        private Point dragFormPoint;
         public MainForm()
         {
             InitializeComponent();
         }
         #region Main UI Events
-
+        #region Top Panel
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -19,6 +22,30 @@ namespace ScryfallCardGenerator
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+        private void panMain_MouseDown(object sender, MouseEventArgs e)
+        {
+            dragging = true;
+            dragCursorPoint = Cursor.Position;
+            dragFormPoint = this.Location;
+        }
+        private void panMain_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                Point diff = Point.Subtract(Cursor.Position, new Size(dragCursorPoint));
+                this.Location = Point.Add(dragFormPoint, new Size(diff));
+            }
+        }
+        private void panMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+        }
+        #endregion Top Panel
+
+        private void rtbCardCount_TextChanged(object sender, EventArgs e)
+        {
+
         }
         private async void btnRandomize_Click(object sender, EventArgs e)
         {
@@ -38,7 +65,7 @@ namespace ScryfallCardGenerator
                 formDisplayCards.Show();
             }));
         }
-        #endregion
+        #endregion Main UI Events
         private async Task<List<CardInfo>> RandomizeAmountOfCards(int randomCount)
         {
             ScryfallClient client = new ScryfallClient();
