@@ -8,6 +8,9 @@ namespace ScryfallCardGenerator
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
+
+        int activeCount;
+        int totalCount;
         public MainForm()
         {
             InitializeComponent();
@@ -45,39 +48,75 @@ namespace ScryfallCardGenerator
 
         private void rtbCardCount_TextChanged(object sender, EventArgs e)
         {
-
-        }
-        private async void btnRandomize_Click(object sender, EventArgs e)
-        {
-            if (!int.TryParse(rtbCardCount.Text, out int randomCount) || randomCount <= 0)
+            if (String.IsNullOrEmpty(rtbCardCount.Text))
+            {
+                rtbCardCount.Text = "0";
+            }
+            if (!int.TryParse(rtbCardCount.Text, out totalCount) || totalCount < 0)
             {
                 MessageBox.Show("Please enter a valid positive number.");
                 return;
             }
-
-            // Fetch cards asynchronously
-            List<CardInfo> cardInfos = await RandomizeAmountOfCards(randomCount);
-
-            // Ensure UI thread access for Windows Forms
-            this.BeginInvoke(new Action(() =>
+            UpdateLiveCount();
+        }
+        private void rtbCardCount_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyData == Keys.Enter)
             {
-                FormDisplayCards formDisplayCards = new FormDisplayCards(cardInfos);
-                formDisplayCards.Show();
-            }));
+                btnRandomize_Click(sender, e);
+            }
+        }
+        private async void btnRandomize_Click(object sender, EventArgs e)
+        {
+            if (activeCount == 0)
+            {
+                if (!int.TryParse(rtbCardCount.Text, out int randomCount) || randomCount < 0)
+                {
+                    MessageBox.Show("Please enter a valid positive number.");
+                    return;
+                }
+
+                // Fetch cards asynchronously
+                List<CardInfo> cardInfos = await RandomizeAmountOfCards(randomCount);
+
+                // Ensure UI thread access for Windows Forms
+                this.BeginInvoke(new Action(() =>
+                {
+                    FormDisplayCards formDisplayCards = new FormDisplayCards(cardInfos);
+                    formDisplayCards.Show();
+                }));
+
+                activeCount = 0;
+            }
         }
         #endregion Main UI Events
+        void UpdateLiveCount()
+        {
+            if (lblLiveCount.InvokeRequired)
+            {
+                lblLiveCount.Invoke(new Action(UpdateLiveCount), activeCount, totalCount);
+            }
+            else
+            {
+                lblLiveCount.Text = $"{activeCount:000}/{totalCount:000}";
+            }
+        }
         private async Task<List<CardInfo>> RandomizeAmountOfCards(int randomCount)
         {
             ScryfallClient client = new ScryfallClient();
             List<CardInfo> cardInfos = new List<CardInfo>();
             for (int i = 0; i < randomCount; i++)
             {
+                activeCount = i;
                 CardInfo cardInfo = new CardInfo();
                 cardInfo = await client.GetRandomCardAsync();
                 cardInfos.Add(cardInfo);
                 Thread.Sleep(150);
+                UpdateLiveCount();
             }
             return cardInfos;
         }
+
+        
     }
 }

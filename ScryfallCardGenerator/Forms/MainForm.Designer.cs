@@ -32,7 +32,7 @@
             btnMinimize = new Button();
             btnClose = new Button();
             tblPanMain = new TableLayoutPanel();
-            label1 = new Label();
+            lblLiveCount = new Label();
             lblAdvancedOptions = new Label();
             lblCardCount = new Label();
             rtbCardCount = new RichTextBox();
@@ -88,7 +88,7 @@
             tblPanMain.ColumnCount = 2;
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.4129944F));
             tblPanMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5870056F));
-            tblPanMain.Controls.Add(label1, 0, 2);
+            tblPanMain.Controls.Add(lblLiveCount, 0, 2);
             tblPanMain.Controls.Add(lblAdvancedOptions, 0, 3);
             tblPanMain.Controls.Add(lblCardCount, 0, 0);
             tblPanMain.Controls.Add(rtbCardCount, 1, 1);
@@ -105,17 +105,17 @@
             tblPanMain.Size = new Size(431, 146);
             tblPanMain.TabIndex = 1;
             // 
-            // label1
+            // lblLiveCount
             // 
-            label1.AutoSize = true;
-            label1.Dock = DockStyle.Fill;
-            label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(3, 64);
-            label1.Name = "label1";
-            label1.Size = new Size(263, 61);
-            label1.TabIndex = 4;
-            label1.Text = "000/100";
-            label1.TextAlign = ContentAlignment.BottomRight;
+            lblLiveCount.AutoSize = true;
+            lblLiveCount.Dock = DockStyle.Fill;
+            lblLiveCount.ForeColor = SystemColors.ButtonHighlight;
+            lblLiveCount.Location = new Point(3, 64);
+            lblLiveCount.Name = "lblLiveCount";
+            lblLiveCount.Size = new Size(263, 61);
+            lblLiveCount.TabIndex = 4;
+            lblLiveCount.Text = "000/100";
+            lblLiveCount.TextAlign = ContentAlignment.BottomRight;
             // 
             // lblAdvancedOptions
             // 
@@ -155,6 +155,7 @@
             rtbCardCount.Text = "100";
             rtbCardCount.WordWrap = false;
             rtbCardCount.TextChanged += rtbCardCount_TextChanged;
+            rtbCardCount.KeyUp += rtbCardCount_KeyUp;
             // 
             // btnRandomize
             // 
@@ -194,6 +195,6 @@
         private RichTextBox rtbCardCount;
         private Button btnRandomize;
         private Label lblAdvancedOptions;
-        private Label label1;
+        private Label lblLiveCount;
     }
 }

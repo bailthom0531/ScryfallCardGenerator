@@ -17,7 +17,7 @@ namespace ScryfallCardGenerator.Tools
             // Create the request and add necessary headers
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("Accept", "application/json"); // Explicitly ask for JSON
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "CommanderRoulette/1.0"); // Mimic a real browser request
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "YourAppName/1.0 (your@email.com)"); // Mimic a real browser request
 
             // Send the request
             HttpResponseMessage response = await _httpClient.SendAsync(request);

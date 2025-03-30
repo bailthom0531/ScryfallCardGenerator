@@ -17,32 +17,72 @@ namespace ScryfallCardGenerator.Forms
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
-
+        Dictionary<ColorCategory, FlowLayoutPanel> colorPanels = new Dictionary<ColorCategory, FlowLayoutPanel>();
         private List<CardInfo> allCards;
-        List<CardInfo> displayedCards; // Holds the 5 currently displayed cards
-
-        System.Timers.Timer scrollTimer;
         private Dictionary<ColorCategory, List<CardInfo>> categorizedCards;
-        int shiftDirection = 0; // -1 for left, 1 for righ
 
-        public enum ColorCategory
-        {
-            Legendary,
-            Colorless,
-            Multicolor,
-            White,
-            Blue,
-            Black,
-            Red,
-            Green
-        }
+        const int IMAGE_MULTIPLIER = 3;
 
         public FormDisplayCards(List<CardInfo> cardInfos)
         {
-            InitializeComponent();
-            InitializeCarousel();
             allCards = cardInfos;
-            OrganizeCardsByColor();
+            InitializeComponent();
+            InitializeColorPanels();
+            OrganizeAndAssignCards();
+
+            this.Resize += FormDisplayCards_Resize; // Attach event
+        }
+        private void FormDisplayCards_Resize(object sender, EventArgs e)
+        {
+            int newOriginalWidth = this.ClientSize.Width / 10; // Adjust width dynamically
+            int newOriginalHeight = (int)(newOriginalWidth * 1.5); // Maintain aspect ratio
+            int newEnlargedWidth = newOriginalWidth * IMAGE_MULTIPLIER;
+            int newEnlargedHeight = newOriginalHeight * IMAGE_MULTIPLIER;
+
+            foreach (var panel in colorPanels.Values)
+            {
+                panel.Width = this.ClientSize.Width / 5; 
+                panel.Height = this.ClientSize.Height;  // Match form height
+
+                foreach(PictureBox pb  in panel.Controls)
+                {
+                    pb.Width = panel.Width / 3;
+                    pb.Height = panel.Height / 3;
+                    // Update event handlers to use new sizes
+                    pb.MouseHover += (s, ev) =>
+                    {
+                        pb.Width = newEnlargedWidth;
+                        pb.Height = newEnlargedHeight;
+                        pb.BringToFront();
+                    };
+
+                    pb.MouseLeave += (s, ev) =>
+                    {
+                        pb.Width = newOriginalWidth;
+                        pb.Height = newOriginalHeight;
+                    };
+                }
+            }
+        }
+        void InitializeColorPanels()
+        {
+            // Initialize the dictionary to store panels
+            colorPanels = new Dictionary<ColorCategory, FlowLayoutPanel>();
+
+            // Create the panels for each ColorCategory
+            foreach (ColorCategory category in Enum.GetValues(typeof(ColorCategory)))
+            {
+                FlowLayoutPanel panel = new FlowLayoutPanel
+                {
+                    Width = 300,  // Adjust based on UI
+                    Height = this.Height, // Adjust based on UI
+                    AutoScroll = true,  // Allow vertical scrolling within each panel
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+
+                colorPanels[category] = panel;  // Use the ColorCategory enum as the key
+                flowPanVerticalScroll.Controls.Add(panel); // Add panel to the container (Vertical scroll panel)
+            }
         }
 
         #region Top Panel
@@ -50,7 +90,17 @@ namespace ScryfallCardGenerator.Forms
         {
             this.Close();
         }
-
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Maximized;
+            }
+        }
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
@@ -76,7 +126,11 @@ namespace ScryfallCardGenerator.Forms
         #endregion Top Panel
 
         #region Data Mangement
-        private void OrganizeCardsByColor()
+        enum ColorCategory
+        {
+            Legendary, Multicolor, White, Blue, Black, Red, Green, Colorless
+        }
+        void OrganizeAndAssignCards()
         {
             // Initialize dictionary with empty lists
             categorizedCards = new Dictionary<ColorCategory, List<CardInfo>>();
@@ -85,76 +139,89 @@ namespace ScryfallCardGenerator.Forms
                 categorizedCards[category] = new List<CardInfo>();
             }
 
-            // Categorize each card
+            // Categorize and assign each card
             foreach (CardInfo card in allCards)
             {
+                ColorCategory category;
+
+                // Check if card is a Legendary Creature
                 if (card.TypeLine.Contains("Legendary Creature"))
                 {
-                    categorizedCards[ColorCategory.Legendary].Add(card);
+                    category = ColorCategory.Legendary;
                 }
-                else if (string.IsNullOrEmpty(card.ColorIdentity))
+                // Check if ColorIdentity is empty (colorless)
+                else if (card.ColorIdentity == null || card.ColorIdentity.Count == 0)
                 {
-                    categorizedCards[ColorCategory.Colorless].Add(card);
+                    category = ColorCategory.Colorless;
                 }
-                else if (card.ColorIdentity.Length == 1) // Only monocolor cards
+                // If the card has only one color
+                else if (card.ColorIdentity.Count == 1)
                 {
-                    switch (card.ColorIdentity)
+                    switch (card.ColorIdentity[0])
                     {
-                        case "W": categorizedCards[ColorCategory.White].Add(card); break;
-                        case "U": categorizedCards[ColorCategory.Blue].Add(card); break;
-                        case "B": categorizedCards[ColorCategory.Black].Add(card); break;
-                        case "R": categorizedCards[ColorCategory.Red].Add(card); break;
-                        case "G": categorizedCards[ColorCategory.Green].Add(card); break;
+                        case "W": category = ColorCategory.White; break;
+                        case "U": category = ColorCategory.Blue; break;
+                        case "B": category = ColorCategory.Black; break;
+                        case "R": category = ColorCategory.Red; break;
+                        case "G": category = ColorCategory.Green; break;
+                        default: category = ColorCategory.Multicolor; break;
                     }
                 }
+                // If the card has multiple colors
                 else
                 {
-                    categorizedCards[ColorCategory.Multicolor].Add(card);
+                    category = ColorCategory.Multicolor;
+                }
+
+                // Add to dictionary
+                categorizedCards[category].Add(card);
+
+                // Assign to UI panel if it exists
+                if (colorPanels.ContainsKey(category))
+                {
+                    AddCardToPanel(colorPanels[category], card);
                 }
             }
         }
         #endregion Data Mangement
 
         #region Carousel
-        void InitializeCarousel()
+        async Task AddCardToPanel(FlowLayoutPanel panel, CardInfo card)
         {
-            // Initialize display list with first 5 images
-            displayedCards = allCards.Take(5).ToList();
-
-            // Setup Timer for smooth animation
-            scrollTimer = new System.Timers.Timer { Interval = 50 };
-            scrollTimer.Tick += ScrollTimer_Tick;
-
-            // Populate initial images
-            UpdateFlowPanel();
-        }
-        void UpdateFlowPanel(FlowLayoutPanel flowPanel)
-        {
-            flowPanel.Controls.Clear();
-            foreach (var img in displayedImages)
+            int originalWidth = 100;
+            int originalHeight = 150;
+            int enlargedWidth = originalWidth * IMAGE_MULTIPLIER;
+            int enlargedHeight = originalHeight * IMAGE_MULTIPLIER;
+            PictureBox pb = new PictureBox
             {
-                PictureBox pb = new PictureBox
-                {
-                    Image = img,
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    Width = 100,
-                    Height = 100,
-                    Margin = new Padding(5)
-                };
-                flowPanel.Controls.Add(pb);
-            }
-        }
-        void ScrollLeft()
-        {
-            shiftDirection = -1;
-            scrollTimer.Start();
+                Image = await card.GetImageAsync(card.ImageUrl),
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Width = 100,
+                Height = 150,
+                Margin = new Padding(5)
+            };
+
+            // Add event handlers
+            pb.MouseHover += (sender, e) =>
+            {
+                PictureBox pic = sender as PictureBox;
+                pic.Width = enlargedWidth;
+                pic.Height = enlargedHeight;
+                pic.BringToFront(); // Ensure it appears above other controls
+            };
+
+            pb.MouseLeave += (sender, e) =>
+            {
+                PictureBox pic = sender as PictureBox;
+                pic.Width = originalWidth;
+                pic.Height = originalHeight;
+            };
+
+            panel.Controls.Add(pb);
         }
 
-        void ScrollRight()
-        {
-            shiftDirection = 1;
-            scrollTimer.Start();
-        }
-        #endregion
+        #endregion Carousel
+
+        
     }
 }

@@ -30,24 +30,17 @@
         {
             panMain = new Panel();
             btnMinimize = new Button();
+            btnMaximize = new Button();
             btnClose = new Button();
             flowPanVerticalScroll = new FlowLayoutPanel();
-            flowPanLegendaryCards = new FlowLayoutPanel();
-            flowPanColorlessCards = new FlowLayoutPanel();
-            flowPanMultiColorCards = new FlowLayoutPanel();
-            flowPanWhiteCards = new FlowLayoutPanel();
-            flowPanBlueCards = new FlowLayoutPanel();
-            flowPanBlackCards = new FlowLayoutPanel();
-            flowPanRedCards = new FlowLayoutPanel();
-            flowPanGreenCards = new FlowLayoutPanel();
             panMain.SuspendLayout();
-            flowPanVerticalScroll.SuspendLayout();
             SuspendLayout();
             // 
             // panMain
             // 
             panMain.BackColor = SystemColors.ControlDarkDark;
             panMain.Controls.Add(btnMinimize);
+            panMain.Controls.Add(btnMaximize);
             panMain.Controls.Add(btnClose);
             panMain.Dock = DockStyle.Top;
             panMain.Location = new Point(0, 0);
@@ -64,13 +57,27 @@
             btnMinimize.Dock = DockStyle.Right;
             btnMinimize.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             btnMinimize.ForeColor = SystemColors.ButtonHighlight;
-            btnMinimize.Location = new Point(719, 0);
+            btnMinimize.Location = new Point(682, 0);
             btnMinimize.Name = "btnMinimize";
             btnMinimize.Size = new Size(37, 34);
-            btnMinimize.TabIndex = 1;
+            btnMinimize.TabIndex = 3;
             btnMinimize.Text = "-";
             btnMinimize.UseVisualStyleBackColor = false;
             btnMinimize.Click += btnMinimize_Click;
+            // 
+            // btnMaximize
+            // 
+            btnMaximize.BackColor = SystemColors.GrayText;
+            btnMaximize.Dock = DockStyle.Right;
+            btnMaximize.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
+            btnMaximize.ForeColor = SystemColors.ButtonHighlight;
+            btnMaximize.Location = new Point(719, 0);
+            btnMaximize.Name = "btnMaximize";
+            btnMaximize.Size = new Size(37, 34);
+            btnMaximize.TabIndex = 2;
+            btnMaximize.Text = "□";
+            btnMaximize.UseVisualStyleBackColor = false;
+            btnMaximize.Click += btnMaximize_Click;
             // 
             // btnClose
             // 
@@ -89,91 +96,12 @@
             // flowPanVerticalScroll
             // 
             flowPanVerticalScroll.AutoScroll = true;
-            flowPanVerticalScroll.Controls.Add(flowPanLegendaryCards);
-            flowPanVerticalScroll.Controls.Add(flowPanColorlessCards);
-            flowPanVerticalScroll.Controls.Add(flowPanMultiColorCards);
-            flowPanVerticalScroll.Controls.Add(flowPanWhiteCards);
-            flowPanVerticalScroll.Controls.Add(flowPanBlueCards);
-            flowPanVerticalScroll.Controls.Add(flowPanBlackCards);
-            flowPanVerticalScroll.Controls.Add(flowPanRedCards);
-            flowPanVerticalScroll.Controls.Add(flowPanGreenCards);
             flowPanVerticalScroll.Dock = DockStyle.Fill;
             flowPanVerticalScroll.FlowDirection = FlowDirection.TopDown;
             flowPanVerticalScroll.Location = new Point(0, 34);
             flowPanVerticalScroll.Name = "flowPanVerticalScroll";
             flowPanVerticalScroll.Size = new Size(793, 623);
             flowPanVerticalScroll.TabIndex = 3;
-            // 
-            // flowPanLegendaryCards
-            // 
-            flowPanLegendaryCards.BackColor = Color.Yellow;
-            flowPanLegendaryCards.Dock = DockStyle.Top;
-            flowPanLegendaryCards.Location = new Point(3, 3);
-            flowPanLegendaryCards.Name = "flowPanLegendaryCards";
-            flowPanLegendaryCards.Size = new Size(200, 89);
-            flowPanLegendaryCards.TabIndex = 0;
-            // 
-            // flowPanColorlessCards
-            // 
-            flowPanColorlessCards.BackColor = Color.Gray;
-            flowPanColorlessCards.Dock = DockStyle.Top;
-            flowPanColorlessCards.Location = new Point(3, 98);
-            flowPanColorlessCards.Name = "flowPanColorlessCards";
-            flowPanColorlessCards.Size = new Size(200, 100);
-            flowPanColorlessCards.TabIndex = 1;
-            // 
-            // flowPanMultiColorCards
-            // 
-            flowPanMultiColorCards.BackColor = Color.FromArgb(192, 192, 0);
-            flowPanMultiColorCards.Dock = DockStyle.Top;
-            flowPanMultiColorCards.Location = new Point(3, 204);
-            flowPanMultiColorCards.Name = "flowPanMultiColorCards";
-            flowPanMultiColorCards.Size = new Size(200, 87);
-            flowPanMultiColorCards.TabIndex = 2;
-            // 
-            // flowPanWhiteCards
-            // 
-            flowPanWhiteCards.BackColor = Color.White;
-            flowPanWhiteCards.Dock = DockStyle.Top;
-            flowPanWhiteCards.Location = new Point(3, 297);
-            flowPanWhiteCards.Name = "flowPanWhiteCards";
-            flowPanWhiteCards.Size = new Size(200, 60);
-            flowPanWhiteCards.TabIndex = 3;
-            // 
-            // flowPanBlueCards
-            // 
-            flowPanBlueCards.BackColor = Color.Blue;
-            flowPanBlueCards.Location = new Point(3, 363);
-            flowPanBlueCards.Name = "flowPanBlueCards";
-            flowPanBlueCards.Size = new Size(200, 37);
-            flowPanBlueCards.TabIndex = 4;
-            // 
-            // flowPanBlackCards
-            // 
-            flowPanBlackCards.BackColor = Color.Black;
-            flowPanBlackCards.Dock = DockStyle.Top;
-            flowPanBlackCards.Location = new Point(3, 406);
-            flowPanBlackCards.Name = "flowPanBlackCards";
-            flowPanBlackCards.Size = new Size(200, 53);
-            flowPanBlackCards.TabIndex = 5;
-            // 
-            // flowPanRedCards
-            // 
-            flowPanRedCards.BackColor = Color.FromArgb(192, 0, 0);
-            flowPanRedCards.Dock = DockStyle.Top;
-            flowPanRedCards.Location = new Point(3, 465);
-            flowPanRedCards.Name = "flowPanRedCards";
-            flowPanRedCards.Size = new Size(200, 78);
-            flowPanRedCards.TabIndex = 6;
-            // 
-            // flowPanGreenCards
-            // 
-            flowPanGreenCards.BackColor = Color.Green;
-            flowPanGreenCards.Dock = DockStyle.Fill;
-            flowPanGreenCards.Location = new Point(3, 549);
-            flowPanGreenCards.Name = "flowPanGreenCards";
-            flowPanGreenCards.Size = new Size(200, 8);
-            flowPanGreenCards.TabIndex = 7;
             // 
             // FormDisplayCards
             // 
@@ -187,22 +115,14 @@
             Name = "FormDisplayCards";
             Text = "FormDisplayCards";
             panMain.ResumeLayout(false);
-            flowPanVerticalScroll.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private Panel panMain;
-        private Button btnMinimize;
         private Button btnClose;
         private FlowLayoutPanel flowPanVerticalScroll;
-        private FlowLayoutPanel flowPanLegendaryCards;
-        private FlowLayoutPanel flowPanColorlessCards;
-        private FlowLayoutPanel flowPanMultiColorCards;
-        private FlowLayoutPanel flowPanWhiteCards;
-        private FlowLayoutPanel flowPanBlueCards;
-        private FlowLayoutPanel flowPanBlackCards;
-        private FlowLayoutPanel flowPanRedCards;
-        private FlowLayoutPanel flowPanGreenCards;
+        private Button btnMaximize;
+        private Button btnMinimize;
     }
 }
