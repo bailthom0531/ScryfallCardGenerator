@@ -21,61 +21,32 @@ namespace ScryfallCardGenerator.Forms
         private List<CardInfo> allCards;
         private Dictionary<ColorCategory, List<CardInfo>> categorizedCards;
 
-        const int IMAGE_MULTIPLIER = 3;
-
         public FormDisplayCards(List<CardInfo> cardInfos)
         {
+            this.WindowState = FormWindowState.Maximized;
+
             allCards = cardInfos;
             InitializeComponent();
+        }
+        private void FormDisplayCards_Shown(object sender, EventArgs e)
+        {
             InitializeColorPanels();
             OrganizeAndAssignCards();
-
-            this.Resize += FormDisplayCards_Resize; // Attach event
         }
-        private void FormDisplayCards_Resize(object sender, EventArgs e)
-        {
-            int newOriginalWidth = this.ClientSize.Width / 10; // Adjust width dynamically
-            int newOriginalHeight = (int)(newOriginalWidth * 1.5); // Maintain aspect ratio
-            int newEnlargedWidth = newOriginalWidth * IMAGE_MULTIPLIER;
-            int newEnlargedHeight = newOriginalHeight * IMAGE_MULTIPLIER;
 
-            foreach (var panel in colorPanels.Values)
-            {
-                panel.Width = this.ClientSize.Width / 5; 
-                panel.Height = this.ClientSize.Height;  // Match form height
-
-                foreach(PictureBox pb  in panel.Controls)
-                {
-                    pb.Width = panel.Width / 3;
-                    pb.Height = panel.Height / 3;
-                    // Update event handlers to use new sizes
-                    pb.MouseHover += (s, ev) =>
-                    {
-                        pb.Width = newEnlargedWidth;
-                        pb.Height = newEnlargedHeight;
-                        pb.BringToFront();
-                    };
-
-                    pb.MouseLeave += (s, ev) =>
-                    {
-                        pb.Width = newOriginalWidth;
-                        pb.Height = newOriginalHeight;
-                    };
-                }
-            }
-        }
         void InitializeColorPanels()
         {
             // Initialize the dictionary to store panels
             colorPanels = new Dictionary<ColorCategory, FlowLayoutPanel>();
+            int colorCount = Enum.GetValues(typeof(ColorCategory)).Length;
 
             // Create the panels for each ColorCategory
             foreach (ColorCategory category in Enum.GetValues(typeof(ColorCategory)))
             {
                 FlowLayoutPanel panel = new FlowLayoutPanel
                 {
-                    Width = 300,  // Adjust based on UI
-                    Height = this.Height, // Adjust based on UI
+                    Width = (int)(this.ClientSize.Width / (colorCount + .1)),  // Adjust based on UI
+                    Height = (int)(this.ClientSize.Height * 0.75), // Adjust based on UI
                     AutoScroll = true,  // Allow vertical scrolling within each panel
                     BorderStyle = BorderStyle.FixedSingle
                 };
@@ -107,6 +78,10 @@ namespace ScryfallCardGenerator.Forms
         }
         private void panMain_MouseDown(object sender, MouseEventArgs e)
         {
+            if(this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
             dragging = true;
             dragCursorPoint = Cursor.Position;
             dragFormPoint = this.Location;
@@ -188,40 +163,79 @@ namespace ScryfallCardGenerator.Forms
         #region Carousel
         async Task AddCardToPanel(FlowLayoutPanel panel, CardInfo card)
         {
-            int originalWidth = 100;
-            int originalHeight = 150;
+            const double ASPECT_RATIO = 0.714; // Width:Height
+            const int IMAGE_MULTIPLIER = 2; // Scale factor for enlargement
+
+            int originalWidth = (int)(panel.Width / 1.5);
+            int originalHeight = (int)(originalWidth / ASPECT_RATIO);
             int enlargedWidth = originalWidth * IMAGE_MULTIPLIER;
-            int enlargedHeight = originalHeight * IMAGE_MULTIPLIER;
+            int enlargedHeight = (int)(enlargedWidth / ASPECT_RATIO);
+
             PictureBox pb = new PictureBox
             {
                 Image = await card.GetImageAsync(card.ImageUrl),
                 SizeMode = PictureBoxSizeMode.StretchImage,
-                Width = 100,
-                Height = 150,
-                Margin = new Padding(5)
+                Width = originalWidth,
+                Height = originalHeight,
+                Margin = new Padding(5),
+                Tag = new Size(originalWidth, originalHeight) // Store original size
+            };
+
+            // Overlay PictureBox (hidden by default)
+            PictureBox enlargedPb = new PictureBox
+            {
+                Image = pb.Image,
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Width = enlargedWidth,
+                Height = enlargedHeight,
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle,
+                Dock = DockStyle.None
             };
 
             // Add event handlers
             pb.MouseHover += (sender, e) =>
             {
-                PictureBox pic = sender as PictureBox;
-                pic.Width = enlargedWidth;
-                pic.Height = enlargedHeight;
-                pic.BringToFront(); // Ensure it appears above other controls
-            };
+                // Convert the PictureBox's position to form coordinates
+                Point screenPos = pb.PointToScreen(Point.Empty);
+                Point formPos = this.PointToClient(screenPos);
 
-            pb.MouseLeave += (sender, e) =>
-            {
-                PictureBox pic = sender as PictureBox;
-                pic.Width = originalWidth;
-                pic.Height = originalHeight;
+                // Ensure enlarged PictureBox is not inside FlowLayoutPanel
+                if (!this.Controls.Contains(enlargedPb))
+                {
+                    this.Controls.Add(enlargedPb);
+                }
+                enlargedPb.BringToFront();
+
+                // Set image, size, and position
+                enlargedPb.Image = pb.Image;
+                enlargedPb.Size = new Size(enlargedWidth, enlargedHeight);
+                enlargedPb.Location = new Point(
+                    formPos.X - (enlargedPb.Width - pb.Width) / 2,
+                    formPos.Y - (enlargedPb.Height - pb.Height) / 2
+                );
+
+
+                // Get the lowest Y coordinate on the screen (furthest bottom)
+                Screen screen = Screen.PrimaryScreen;
+                int lowestY = screen.Bounds.Bottom;
+                int furthestRight = screen.Bounds.Right;
+
+                if (enlargedPb.Location.Y < 0) { enlargedPb.Location = new Point(enlargedPb.Location.X, 0); }
+                if (enlargedPb.Location.Y > lowestY + enlargedHeight) { enlargedPb.Location = new Point(enlargedPb.Location.X, lowestY - enlargedHeight); }
+                if (enlargedPb.Location.X < 0) { enlargedPb.Location = new Point(0, enlargedPb.Location.Y); }
+                if (enlargedPb.Location.X > furthestRight + enlargedWidth) { enlargedPb.Location = new Point(furthestRight - enlargedWidth, enlargedPb.Location.Y); }
+
+                enlargedPb.Visible = true;
+                enlargedPb.MouseLeave += (sender, e) =>
+                {
+                    enlargedPb.Visible = false;
+                    enlargedPb.Parent?.Controls.Remove(enlargedPb);
+                };
             };
 
             panel.Controls.Add(pb);
         }
-
         #endregion Carousel
-
-        
     }
 }

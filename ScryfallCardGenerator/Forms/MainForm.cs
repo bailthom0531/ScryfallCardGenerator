@@ -83,10 +83,12 @@ namespace ScryfallCardGenerator
                 this.BeginInvoke(new Action(() =>
                 {
                     FormDisplayCards formDisplayCards = new FormDisplayCards(cardInfos);
-                    formDisplayCards.Show();
+                    formDisplayCards.ShowDialog();
+
+                    activeCount = 0;
+                    UpdateLiveCount();
                 }));
 
-                activeCount = 0;
             }
         }
         #endregion Main UI Events
