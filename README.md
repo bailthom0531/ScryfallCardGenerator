@@ -4,8 +4,8 @@
 This project is the beginning of a MTG card roulette game. Set the amount of cards you would like to pull and wait as the app randomly selects the desired amount of cards.
 
 ## Installation Instruction
-- On the right side of the v1.0_Beta release homepage, under Releases, click v1.0_Beta.
-- In the release window, click the v1.0_Beta.zip file to download the compressed folder.
+- On the right side of the v1.0.0 release homepage, under Releases, click v1.0_Beta.
+- In the release window, click the v1.0.0.zip file to download the compressed folder.
 - Once the download is complete, extract the contents of the folder to your desired location.
 - Inside the extracted folder, run ScryfallCardGenerator.exe.
 - If Windows Defender appears, click More options and then Run anyway to proceed.
